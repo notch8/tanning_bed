@@ -29,7 +29,7 @@
  http://wiki.apache.org/solr/SchemaXml
 -->
 
-<schema name="acts_as_solr" version="0.9">
+<schema name="tannng_bed" version="0.1">
   <types>
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="false"/>
     <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="false"/>
@@ -97,7 +97,7 @@
 
 
  <fields>
-   <field name="id" type="string" indexed="true" stored="true" required="true" /> 
+   <field name="search_id" type="string" indexed="true" stored="true" required="true" /> 
    <field name="pk_i" type="integer" indexed="true" stored="true"/>
    <field name="pk_s" type="string" indexed="true" stored="true"/>   
    <field name="text" type="text" indexed="true" stored="false" multiValued="true"/>
@@ -116,7 +116,7 @@
    <dynamicField name="*_display" type="text" indexed="false" stored="true" multiValued="true"/>
  </fields>
 
- <uniqueKey>id</uniqueKey>
+ <uniqueKey>search_id</uniqueKey>
  <defaultSearchField>text</defaultSearchField>
 
  <copyField source="*_t" dest="text"/>

@@ -30,7 +30,10 @@ describe "TanningBed" do
   end
   
   it "should enable searching solr for a set of records (by ids)" do 
-    pending
+    @example.solr_add
+    result = TanningBed.solr_search("Big")
+    result.total_hits.should == 1
+    puts result.inspect
   end
   
   it "should allow searching for only records of a specific class" do
