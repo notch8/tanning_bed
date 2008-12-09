@@ -1,2 +1,2 @@
-solr/solr/data/*
-solr/logs/*
+vendor/solr/solr/data/*
+vendor/solr/logs/*
