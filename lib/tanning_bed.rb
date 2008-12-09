@@ -3,7 +3,7 @@ require 'solr'
 module TanningBed
   module ClassMethods
     def solr_search(query_string)
-      TanningBed.solr_connection.query(query_string)
+      TanningBed.solr_connection.query(query_string + " AND type_t:#{self}")
     end
   end
   
@@ -14,6 +14,10 @@ module TanningBed
   # connect to the solr instance
   def self.solr_connection
     @@conn ||= Solr::Connection.new('http://localhost:8983/solr', :autocommit => :on)
+  end
+  
+  def solr_id
+    "#{self.class} #{self.id}"
   end
 
   # add a document to the index
@@ -30,7 +34,7 @@ module TanningBed
   end
 
   def solr_delete
-    TanningBed.solr_connection.delete(self.id)
+    TanningBed.solr_connection.delete(solr_id)
   end
 
   def solr_keys
@@ -46,7 +50,9 @@ module TanningBed
         fields["#{key}#{key_type}"] = value
       end
     end
-    fields[:search_id] = "#{self.class} #{self.id}"
+    fields[:search_id] = solr_id
+    fields[:type_t] = self.class.to_s
+    fields[:id_t] = self.id
     return fields
   end
 

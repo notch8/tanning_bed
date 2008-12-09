@@ -8,3 +8,4 @@ Dir.glob(__DIR__ + "../lib/**.rb").each do |file|
 end
 
 require __DIR__ + "fixtures/tanning_model.rb"
+require __DIR__ + "fixtures/burnt_model.rb"

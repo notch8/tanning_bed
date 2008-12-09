@@ -14,6 +14,11 @@ Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/sol
 
 == SYNOPSIS:
 
+  Objects must implement:
+  
+  * id - unique identifier for the record
+  * solr_keys - an array of method names, the method results will be added to the index
+  
   FIXME (code sample of usage)
 
 == REQUIREMENTS:
