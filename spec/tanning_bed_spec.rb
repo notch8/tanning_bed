@@ -50,5 +50,11 @@ describe "TanningBed" do
     result.total_hits.should == 1
     result.hits.first["search_id"].should eql(["TanningModel 666"])
   end
+  
+  it "should not add a postfix to a key that is already in the correct format" do
+    ["_i", "_facet", "_t", "_f", "_d"].each do |postfix|
+      @tanning.lookup_key_type("test_#{postfix}", String).should be_nil
+    end
+  end
 
 end

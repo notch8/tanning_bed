@@ -47,7 +47,7 @@ module TanningBed
     self.solr_keys.each do |key|
       if self.respond_to?(key)
         value = self.send(key)
-        key_type = lookup_key_type(value.class)        
+        key_type = lookup_key_type(key, value.class)        
         fields["#{key}#{key_type}"] = value
       end
     end
@@ -57,12 +57,21 @@ module TanningBed
     return fields
   end
 
-  def lookup_key_type(klass)
+  def lookup_key_type(key, klass)
+    # is the key already in the correct_format?
+    key_postfix = key.split("_").last
+    return nil if ["i", "facet", "t", "f", "d"].include?(key_postfix)
+    
+    # Add the helper to the key string
     case klass.to_s
     when "Fixnum"
       "_i"
     when "String"
-      "_t"
+      if key.size < 255
+        "_facet"
+      else
+        "_t"
+      end
     when "Float"
       "_f"
     when "Date", "Datetime", "Time"

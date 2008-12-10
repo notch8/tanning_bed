@@ -6,7 +6,7 @@ require 'spec/rake/spectask'
  
 GEM = "tanning_bed"
 GEM_VERSION = "0.0.1"
-SUMMARY = "FIXME Summary"
+SUMMARY = "Tanning Bed is Solr for models."
 AUTHOR = "Rob Kaufman"
 EMAIL = "rob@notch8.com"
 HOMEPAGE = "http://github.com/notch8/tanning_bed"

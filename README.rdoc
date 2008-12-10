@@ -34,7 +34,7 @@ Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/sol
 
 (The MIT License)
 
-Copyright (c) 2008 Rob Kaufman
+Copyright (c) 2008 Assay Depot Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
