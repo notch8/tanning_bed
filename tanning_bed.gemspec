@@ -6,13 +6,13 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Rob Kaufman"]
-  s.date = %q{2008-12-09}
+  s.date = %q{2008-12-10}
   s.email = %q{rob@notch8.com}
   s.homepage = %q{http://github.com/notch8/tanning_bed}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{tanning_bed}
   s.rubygems_version = %q{1.3.1}
-  s.summary = %q{FIXME Summary}
+  s.summary = %q{Tanning Bed is Solr for models.}
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
