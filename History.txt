@@ -1,4 +1,3 @@
-== 1.0.0 / 2008-12-15
+== 0.0.2 / 2008-12-15
 
-* 1 major enhancement
-  * Birthday!
+* Added Mr Bones rake tasks and a better gemspec
