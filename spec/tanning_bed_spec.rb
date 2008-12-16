@@ -1,3 +1,5 @@
+# $Id$
+
 __DIR__ = File.dirname(__FILE__) + "/"
 
 require __DIR__ + 'spec_helper.rb'
@@ -58,3 +60,5 @@ describe "TanningBed" do
   end
 
 end
+
+# EOF

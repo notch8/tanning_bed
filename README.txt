@@ -1,4 +1,4 @@
-tanning-bed
+tanning_bed
     by Rob Kaufman (notch8.com)
     with permission and support from the Assay Depot (assaydepot.com)
 
