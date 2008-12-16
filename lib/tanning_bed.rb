@@ -1,5 +1,7 @@
 __DIR__ = File.dirname(__FILE__) + "/"
-require __DIR__ + '../vendor/solr-ruby/lib/solr.rb'
+$: << File.expand_path(__DIR__ + '../vendor/solr-ruby/lib')
+require 'solr'
+
 # $Id$
 
 # Equivalent to a header guard in C/C++
@@ -8,8 +10,24 @@ unless defined? TanningBed
 
 module TanningBed
   module ClassMethods
-    def solr_search(query_string)
-      TanningBed.solr_connection.query(query_string + " AND type_t:#{self}")
+    def solr_search(query_string, options)
+      TanningBed.solr_connection.query(query_string + " AND type_t:#{self}", options)
+    end
+    
+    def solr_load(results)
+      key_set = results.collect do |result|
+        key = result["search_id"].first.split(" ")
+        next if key[0] != self.to_s
+        Kernel.const_get(key[0]).send(:get, key[1])
+      end
+      key_set.delete(nil)
+      return key_set
+    end
+    
+    def solr_reindex
+      self.all.each do |item|
+        item.solr_add
+      end
     end
   end
   
@@ -35,8 +53,16 @@ module TanningBed
     TanningBed.solr_connection.update(search_fields)
   end
 
-  def self.solr_search(query_string)
-    TanningBed.solr_connection.query(query_string)
+  def self.solr_search(query_string, options)
+    TanningBed.solr_connection.query(query_string, options)
+  end
+  
+  def self.solr_load(results)
+    key_set = results.collect do |result|
+      key = result["search_id"].first.split(" ")
+      Kernel.const_get(key[0]).send(:get, key[1])
+    end
+    return key_set
   end
 
   def solr_delete
@@ -65,7 +91,7 @@ module TanningBed
   def lookup_key_type(key, klass)
     # is the key already in the correct_format?
     key_postfix = key.split("_").last
-    return nil if ["i", "facet", "t", "f", "d"].include?(key_postfix)
+    return nil if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
     
     # Add the helper to the key string
     case klass.to_s
@@ -81,6 +107,8 @@ module TanningBed
       "_f"
     when "Date", "Datetime", "Time"
       "_d"
+    when "Array"
+      "_s_mv"
     else
       "_t"
     end
