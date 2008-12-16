@@ -1,3 +1,7 @@
+== 0.0.3 / 2008-12-16
+
+* Added solr_reindex and solr_load class methods
+
 == 0.0.2 / 2008-12-15
 
 * Added Mr Bones rake tasks and a better gemspec
