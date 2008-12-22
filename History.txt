@@ -1,3 +1,7 @@
+== 0.0.5 / 2008-12-21
+* Minor updates and fixes
+* Easier to set sorl_connection
+
 == 0.0.3 / 2008-12-16
 
 * Added solr_reindex and solr_load class methods
