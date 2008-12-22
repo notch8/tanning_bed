@@ -1,10 +1,20 @@
 # $Id$
-
+require 'open-uri'
 __DIR__ = File.dirname(__FILE__) + "/"
 
 require __DIR__ + 'spec_helper.rb'
 
 describe "TanningBed" do
+  before(:all) do
+    begin
+      open("http://localhost:8984/solr")
+    rescue
+      puts "Solr must be started on port 8984 before you run the specs.  Use rake solr:start SOLR_PORT=8984"
+      exit 1
+    end
+    TanningBed.solr_connection('http://localhost:8984/solr', :on)
+  end
+    
   before(:each) do
     @tanning = TanningModel.new
     @burnt = BurntModel.new

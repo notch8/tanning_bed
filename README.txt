@@ -14,13 +14,54 @@ Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/sol
 
 == SYNOPSIS:
 
+=== Setup
+  Using TanningBed for a given class involves including the TanningBed model and then implementing a few (easy) methods.
+   
   Objects must implement:
   
   * id - unique identifier for the record
+  * Class.get - this method receives and object's id and loads it
   * solr_keys - an array of method names, the method results will be added to the index
-  
-  FIXME (code sample of usage)
 
+==== Examples
+
+===== CouchRest
+  id is already implemented and so is get.  CouchRest has a method called keys which we'll use
+  
+    class MyDocument < CouchRest::Model
+      include TanningBed
+      
+      key_accessor :name
+      key_accessor :address
+      
+      def solr_keys
+        keys
+      end
+  
+===== ActiveRecord
+
+  id is implemented in ActiveRecord already
+  
+   class MyModel < ActiveRecord::Base
+     include TanningBed
+     
+     def get(value)
+       find(value)
+     end
+     
+     def solr_keys
+       attribute_names
+     end
+   end
+
+=== Adding, Updating or Deleting
+  Adding a record is accomplished by 
+  
+=== Changing Solr connection
+  To change the url for Solr or to change whether autocommit is on or not add the following to you're instantiation (for example config/enviroments/production.rb) 
+  
+   TanningBed.solr_connection(YOUR_SOLR_URL, :off)
+   
 == REQUIREMENTS:
 
 * Solr (bundled)

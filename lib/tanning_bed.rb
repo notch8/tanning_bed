@@ -10,7 +10,7 @@ unless defined? TanningBed
 
 module TanningBed
   module ClassMethods
-    def solr_search(query_string, options)
+    def solr_search(query_string, options={})
       TanningBed.solr_connection.query(query_string + " AND type_t:#{self}", options)
     end
     
@@ -36,8 +36,8 @@ module TanningBed
   end
   
   # connect to the solr instance
-  def self.solr_connection
-    @@conn ||= Solr::Connection.new('http://localhost:8983/solr', :autocommit => :on)
+  def self.solr_connection(url='http://localhost:8983/solr', autocommit=:on)
+    @@conn ||= Solr::Connection.new(url, :autocommit => autocommit)
   end
   
   def solr_id
@@ -53,7 +53,7 @@ module TanningBed
     TanningBed.solr_connection.update(search_fields)
   end
 
-  def self.solr_search(query_string, options)
+  def self.solr_search(query_string, options={})
     TanningBed.solr_connection.query(query_string, options)
   end
   
