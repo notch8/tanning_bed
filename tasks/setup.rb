@@ -22,7 +22,7 @@ PROJ = OpenStruct.new(
   :release_name => ENV['RELEASE'],
 
   # System Defaults
-  :ruby_opts => %w(-w),
+  :ruby_opts => %w(),
   :libs => [],
   :history_file => 'History.txt',
   :manifest_file => 'Manifest.txt',

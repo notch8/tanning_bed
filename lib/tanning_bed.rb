@@ -12,6 +12,8 @@ module TanningBed
   module ClassMethods
     def solr_search(query_string, options={})
       TanningBed.solr_connection.query(query_string + " AND type_t:#{self}", options)
+    rescue Errno::ECONNREFUSED => e
+      TanningBed.solr_exception(e)      
     end
     
     def solr_load(results)
@@ -32,12 +34,34 @@ module TanningBed
   end
   
   def self.included(base)
+    @@conn = nil
+    @@on_solr_exception = nil
     base.extend(ClassMethods)
   end
   
   # connect to the solr instance
-  def self.solr_connection(url='http://localhost:8983/solr', autocommit=:on)
-    @@conn ||= Solr::Connection.new(url, :autocommit => autocommit)
+  def self.solr_connection(url='http://localhost:8983/solr', autocommit=:on, reset=false)
+    if reset
+      @@conn = Solr::Connection.new(url, :autocommit => autocommit) 
+    else
+      @@conn ||= Solr::Connection.new(url, :autocommit => autocommit)
+    end
+  end  
+  
+  def self.solr_exception(e)
+    if TanningBed.on_solr_exception
+      TanningBed.on_solr_exception.call(e)
+    else
+      $stderr.puts("SOLR - " + e)
+    end
+  end
+  
+  def self.on_solr_exception
+    @@on_solr_exception
+  end
+  
+  def self.on_solr_exception=(value)
+    @@on_solr_exception = value
   end
   
   def solr_id
@@ -47,14 +71,20 @@ module TanningBed
   # add a document to the index
   def solr_add
     TanningBed.solr_connection.add(search_fields)
+  rescue Errno::ECONNREFUSED => e
+    TanningBed.solr_exception(e)
   end
 
   def solr_update
     TanningBed.solr_connection.update(search_fields)
+  rescue Errno::ECONNREFUSED => e
+    TanningBed.solr_exception(e)
   end
 
   def self.solr_search(query_string, options={})
     TanningBed.solr_connection.query(query_string, options)
+  rescue Errno::ECONNREFUSED => e
+    TanningBed.solr_exception(e)
   end
   
   def self.solr_load(results)
@@ -67,6 +97,8 @@ module TanningBed
 
   def solr_delete
     TanningBed.solr_connection.delete(solr_id)
+  rescue Errno::ECONNREFUSED => e
+    TanningBed.solr_exception(e)
   end
 
   def solr_keys
@@ -116,7 +148,7 @@ module TanningBed
 
 
   # :stopdoc:
-  VERSION = '0.0.5'
+  VERSION = '0.0.6'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:

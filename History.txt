@@ -1,4 +1,9 @@
+== 0.0.6 / 2008-12-22
+
+* Solid exception handling with new on_solr_exception hook
+
 == 0.0.5 / 2008-12-21
+
 * Minor updates and fixes
 * Easier to set sorl_connection
 

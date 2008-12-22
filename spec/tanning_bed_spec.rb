@@ -68,6 +68,37 @@ describe "TanningBed" do
       @tanning.lookup_key_type("test_#{postfix}", String).should be_nil
     end
   end
+  
+  it "should swallow exceptions by default if Solr is down" do
+    tmp_file = __DIR__ + "/tmp/solr_err.tmp"
+    FileUtils.mkdir_p(__DIR__ + "/tmp")
+    TanningBed.solr_connection('http://localhost:9999/solr', :on, true)
+
+    old_err = $stderr
+    $stderr = File.open(tmp_file, "w")
+    TanningBed.solr_search("test")
+    $stderr.flush
+    $stderr.close
+    $stderr = old_err
+    File.open(tmp_file, "r") do |file|
+      file.read.should == "SOLR - Connection refused - connect(2)\n"
+    end
+    TanningBed.solr_connection('http://localhost:8984/solr', :on, true)
+    
+  end
+  
+  it "should store a proc to handle exceptions if Solr is down" do
+    tmp_file = __DIR__ + "/tmp/solr_err.tmp"
+
+    TanningBed.solr_connection('http://localhost:9999/solr', :on, true)
+    
+    TanningBed.on_solr_exception = Proc.new {|e| raise e}
+    lambda {TanningBed.solr_search("test")}.should raise_error(Errno::ECONNREFUSED)
+
+    TanningBed.on_solr_exception = nil
+    TanningBed.solr_connection('http://localhost:8984/solr', :on, true)    
+  end
+  
 
 end
 
