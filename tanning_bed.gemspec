@@ -1,4 +1,3 @@
-(in /Users/rob/work/assay_depot/tanning_bed)
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
