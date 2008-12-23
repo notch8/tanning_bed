@@ -48,10 +48,11 @@ namespace :solr do
   
   desc 'Remove Solr index'
   task :destroy_index do
-    if File.exists?("#{solr_path}/solr/data")
-      Dir[ solr_path + "/solr/data/index/*"].each{|f| File.unlink(f)}
-      Dir.rmdir(solr_path + "/solr/data/index")
-      puts "Index files removed under #{sorl_path}/solr/data/index" 
+    index_path = "#{solr_path}/solr/data"
+    if File.exists?(index_path)
+      Dir[ index_path + "/index/*"].each{|f| File.unlink(f)}
+      Dir.rmdir(index_path + "/index")
+      puts "Index files removed under #{index_path}/index" 
     end
   end
   

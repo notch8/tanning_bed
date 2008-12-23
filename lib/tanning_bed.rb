@@ -27,6 +27,10 @@ module TanningBed
     end
     
     def solr_reindex
+      # Remove all the old entries for this class
+      TanningBed.solr_connection.delete_by_query(self.to_s)
+      
+      #Add all the current records into the index
       self.all.each do |item|
         item.solr_add
       end
@@ -148,7 +152,7 @@ module TanningBed
 
 
   # :stopdoc:
-  VERSION = '0.0.6'
+  VERSION = '0.0.7'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
