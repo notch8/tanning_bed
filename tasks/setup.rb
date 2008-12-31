@@ -59,7 +59,7 @@ PROJ = OpenStruct.new(
   # File Annotations
   :notes => OpenStruct.new(
     :exclude => %w(^tasks/setup\.rb$),
-    :extensions => %w(.txt .rb .erb) << '',
+    :extensions => %w(.txt .rb .erb .rdoc) << '',
     :tags => %w(FIXME OPTIMIZE TODO)
   ),
 

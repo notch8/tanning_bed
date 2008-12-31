@@ -14,6 +14,7 @@ PROJ.authors = 'Rob Kaufman'
 PROJ.email = 'rob@notch8.com'
 PROJ.url = 'notch8.com'
 PROJ.rubyforge.name = 'tanning_bed'
+PROJ.version = TanningBed.version
 
 PROJ.spec.opts << '--color'
 

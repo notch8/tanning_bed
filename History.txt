@@ -1,3 +1,7 @@
+== 0.0.8 / 2008-12-31
+
+* Version bump
+
 == 0.0.7 / 2008-12-22
 
 * Better solr_reindex method.  Now clears all previously indexed items first
