@@ -1,6 +1,7 @@
 class BurntModel
   include TanningBed
   attr_accessor :name, :description
+
   def initialize
     @name = "Big Bad Voodoo Daddy"
     @description = "Not really that bad after all."
@@ -10,6 +11,11 @@ class BurntModel
     666
   end
   
+  def find(value)
+    666
+  end
+  alias :get :find
+
   def solr_keys
     ["name", "description"]
   end
