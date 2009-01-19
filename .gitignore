@@ -1,6 +1,5 @@
 pkg/*
 vendor/solr/solr/data/*
 vendor/solr/logs/*
-!vendor/solr/logs/
 vendor/solr/tmp
 spec/tmp/*

@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{tanning_bed}
-  s.version = "0.0.8"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Rob Kaufman"]
-  s.date = %q{2008-12-30}
+  s.date = %q{2009-01-19}
   s.description = %q{Tanning Bed is Solr for models. Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/solr/) search engine to use in you're models not matter whether they are Datamapper, Active Record, Couchrest or just general Ruby classes.}
   s.email = %q{rob@notch8.com}
   s.extra_rdoc_files = ["History.txt", "vendor/solr-ruby/test/unit/tab_delimited.txt", "vendor/solr/CHANGES.txt", "vendor/solr/LICENSE.txt", "vendor/solr/NOTICE.txt", "vendor/solr/solr/README.txt", "vendor/solr/solr/conf/protwords.txt", "vendor/solr/solr/conf/stopwords.txt", "vendor/solr/solr/conf/synonyms.txt"]
