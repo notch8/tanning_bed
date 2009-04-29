@@ -25,7 +25,7 @@ describe "TanningBed" do
   end
   
   it "should enable adding a record to solr" do
-    @tanning.methods.include?("solr_add").should be_true
+    @tanning.respond_to?("solr_add").should be_true
     @tanning.solr_add.should be_true    
   end
   
@@ -50,7 +50,7 @@ describe "TanningBed" do
     @tanning.solr_add
     @burnt.solr_add
     result = TanningBed.solr_search("Big")
-    result.total_hits.should == 2
+    result.total_hits.should be_equal(2)
     result.hits.first["search_id"].should eql(["TanningModel 666"])
     result.hits.last["search_id"].should eql(["BurntModel 666"])
   end
@@ -59,7 +59,7 @@ describe "TanningBed" do
     @tanning.solr_add
     @burnt.solr_add
     result = TanningModel.solr_search("Big")
-    result.total_hits.should == 1
+    result.total_hits.should be_equal(1)
     result.hits.first["search_id"].should eql(["TanningModel 666"])
   end
   

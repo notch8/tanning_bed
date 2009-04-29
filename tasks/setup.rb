@@ -1,12 +1,15 @@
-# $Id$
 
 require 'rubygems'
 require 'rake'
 require 'rake/clean'
 require 'fileutils'
 require 'ostruct'
+require 'find'
 
-class OpenStruct; undef :gem; end
+class OpenStruct; undef :gem if defined? :gem; end 
+
+# TODO: make my own openstruct type object that includes descriptions
+# TODO: use the descriptions to output help on the available bones options
 
 PROJ = OpenStruct.new(
   # Project Defaults
@@ -25,8 +28,8 @@ PROJ = OpenStruct.new(
   :ruby_opts => %w(),
   :libs => [],
   :history_file => 'History.txt',
-  :manifest_file => 'Manifest.txt',
   :readme_file => 'README.rdoc',
+  :ignore_file => '.bnsignore',
 
   # Announce
   :ann => OpenStruct.new(
@@ -48,6 +51,7 @@ PROJ = OpenStruct.new(
   # Gem Packaging
   :gem => OpenStruct.new(
     :dependencies => [],
+    :development_dependencies => [],
     :executables => nil,
     :extensions => FileList['ext/**/extconf.rb'],
     :files => nil,
@@ -74,7 +78,7 @@ PROJ = OpenStruct.new(
   # Rdoc
   :rdoc => OpenStruct.new(
     :opts => [],
-    :include => %w(^lib/ ^bin/ ^ext/ \.txt$),
+    :include => %w(^lib/ ^bin/ ^ext/ \.txt$ \.rdoc$),
     :exclude => %w(extconf\.rb$),
     :main => nil,
     :dir => 'doc',
@@ -110,17 +114,17 @@ PROJ = OpenStruct.new(
 )
 
 # Load the other rake files in the tasks folder
-rakefiles = Dir.glob('tasks/*.rake').sort
-rakefiles.unshift(rakefiles.delete('tasks/post_load.rake')).compact!
+tasks_dir = File.expand_path(File.dirname(__FILE__))
+post_load_fn = File.join(tasks_dir, 'post_load.rake')
+rakefiles = Dir.glob(File.join(tasks_dir, '*.rake')).sort
+rakefiles.unshift(rakefiles.delete(post_load_fn)).compact!
 import(*rakefiles)
 
 # Setup the project libraries
 %w(lib ext).each {|dir| PROJ.libs << dir if test ?d, dir}
 
 # Setup some constants
-WIN32 = %r/djgpp|(cyg|ms|bcc)win|mingw/ =~ RUBY_PLATFORM unless defined? WIN32
-
-DEV_NULL = WIN32 ? 'NUL:' : '/dev/null'
+DEV_NULL = File.exist?('/dev/null') ? '/dev/null' : 'NUL:'
 
 def quiet( &block )
   io = [STDOUT.dup, STDERR.dup]
@@ -133,23 +137,17 @@ ensure
   $stdout, $stderr = STDOUT, STDERR
 end
 
-DIFF = if WIN32 then 'diff.exe'
-       else
-         if quiet {system "gdiff", __FILE__, __FILE__} then 'gdiff'
-         else 'diff' end
-       end unless defined? DIFF
+DIFF = if system("gdiff '#{__FILE__}' '#{__FILE__}' > #{DEV_NULL} 2>&1") then 'gdiff'
+       else 'diff' end unless defined? DIFF
 
-SUDO = if WIN32 then ''
-       else
-         if quiet {system 'which sudo'} then 'sudo'
-         else '' end
-       end
+SUDO = if system("which sudo > #{DEV_NULL} 2>&1") then 'sudo'
+       else '' end unless defined? SUDO
 
-RCOV = WIN32 ? 'rcov.bat' : 'rcov'
-RDOC = WIN32 ? 'rdoc.bat' : 'rdoc'
-GEM  = WIN32 ? 'gem.bat'  : 'gem'
+RCOV = "#{RUBY} -S rcov"
+RDOC = "#{RUBY} -S rdoc"
+GEM  = "#{RUBY} -S gem"
 
-%w(rcov spec/rake/spectask rubyforge bones facets/ansicode).each do |lib|
+%w(rcov spec/rake/spectask rubyforge bones facets/ansicode zentest).each do |lib|
   begin
     require lib
     Object.instance_eval {const_set "HAVE_#{lib.tr('/','_').upcase}", true}
@@ -161,6 +159,12 @@ HAVE_SVN = (Dir.entries(Dir.pwd).include?('.svn') and
             system("svn --version 2>&1 > #{DEV_NULL}"))
 HAVE_GIT = (Dir.entries(Dir.pwd).include?('.git') and
             system("git --version 2>&1 > #{DEV_NULL}"))
+
+# Add bones as a development dependency
+#
+if HAVE_BONES
+  PROJ.gem.development_dependencies << ['bones', ">= #{Bones::VERSION}"]
+end
 
 # Reads a file at +path+ and spits out an array of the +paragraphs+
 # specified.
@@ -243,9 +247,29 @@ end
 # Scans the current working directory and creates a list of files that are
 # candidates to be in the manifest.
 #
-def manifest_files
+def manifest
   files = []
-  exclude = Regexp.new(PROJ.exclude.join('|'))
+  exclude = PROJ.exclude.dup
+  comment = %r/^\s*#/
+ 
+  # process the ignore file and add the items there to the exclude list
+  if test(?f, PROJ.ignore_file)
+    ary = []
+    File.readlines(PROJ.ignore_file).each do |line|
+      next if line =~ comment
+      line.chomp!
+      line.strip!
+      next if line.nil? or line.empty?
+
+      glob = line =~ %r/\*\./ ? File.join('**', line) : line
+      Dir.glob(glob).each {|fn| ary << "^#{Regexp.escape(fn)}"}
+    end
+    exclude.concat ary
+  end
+
+  # generate a regular expression from the exclude list
+  exclude = Regexp.new(exclude.join('|'))
+
   Find.find '.' do |path|
     path.sub! %r/^(\.\/|\/)/o, ''
     next unless test ?f, path

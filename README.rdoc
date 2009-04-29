@@ -11,6 +11,7 @@ Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/sol
 
 * Incredibly simple in design, no fancy hooks
 * Very Ruby
+* {Ruby 1.9 Compatible}[http://notch8.github.com/files/Ruby19Badge.png]
 
 == SYNOPSIS:
 

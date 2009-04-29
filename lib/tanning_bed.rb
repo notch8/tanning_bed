@@ -56,7 +56,7 @@ module TanningBed
     if TanningBed.on_solr_exception
       TanningBed.on_solr_exception.call(e)
     else
-      $stderr.puts("SOLR - " + e)
+      $stderr.puts("SOLR - " + e.to_s)
     end
   end
   
@@ -110,18 +110,18 @@ module TanningBed
   end
   
   def search_fields
-    fields = {}
+    @fields = {}
     self.solr_keys.each do |key|
       if self.respond_to?(key)
         value = self.send(key)
         key_type = lookup_key_type(key, value.class)        
-        fields["#{key}#{key_type}"] = value
+        @fields["#{key}#{key_type}"] = value
       end
     end
-    fields[:search_id] = solr_id
-    fields[:type_t] = self.class.to_s
-    fields[:id_t] = self.id
-    return fields
+    @fields[:search_id] = solr_id
+    @fields[:type_t] = self.class.to_s
+    @fields[:id_t] = self.id
+    return @fields
   end
 
   def lookup_key_type(key, klass)
