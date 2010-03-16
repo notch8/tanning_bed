@@ -21,7 +21,7 @@ Bones {
   url      'http://notch8.com'
   rubyforge.name = 'tanning_bed'
   spec.opts << '--color'
-  depend_on 'solr-ruby', '0.8'
+  depend_on 'solr-ruby', '0.0.8'
   depend_on 'tanning_bed_solr', :development => true
 }
 
