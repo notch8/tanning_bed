@@ -24,16 +24,16 @@ Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/sol
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<solr-ruby>, [">= 0.8"])
+      s.add_runtime_dependency(%q<solr-ruby>, [">= 0.0.8"])
       s.add_development_dependency(%q<tanning_bed_solr>, [">= 0.0.1"])
       s.add_development_dependency(%q<bones>, [">= 3.4.0"])
     else
-      s.add_dependency(%q<solr-ruby>, [">= 0.8"])
+      s.add_dependency(%q<solr-ruby>, [">= 0.0.8"])
       s.add_dependency(%q<tanning_bed_solr>, [">= 0.0.1"])
       s.add_dependency(%q<bones>, [">= 3.4.0"])
     end
   else
-    s.add_dependency(%q<solr-ruby>, [">= 0.8"])
+    s.add_dependency(%q<solr-ruby>, [">= 0.0.8"])
     s.add_dependency(%q<tanning_bed_solr>, [">= 0.0.1"])
     s.add_dependency(%q<bones>, [">= 3.4.0"])
   end
