@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{tanning_bed}
-  s.version = "0.0.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Rob Kaufman"]
@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.description = %q{Tanning Bed is Solr for models.
 Tanning Bed provides a Ruby interface for the Solr (http://lucene.apache.org/solr/) search engine to use in you're models not matter whether they are Datamapper, Active Record, Couchrest or just general Ruby classes.}
   s.email = %q{rob@notch8.com}
-  s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.rdoc", "README.txt"]
-  s.files = [".gitignore", "History.txt", "Manifest.txt", "README.rdoc", "README.txt", "Rakefile", "lib/tanning_bed.rb", "spec/fixtures/burnt_model.rb", "spec/fixtures/tanning_model.rb", "spec/spec_helper.rb", "spec/tanning_bed_spec.rb", "tanning_bed.gemspec", "tasks/solr.rake", "tasks/solr.rb"]
+  s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.rdoc", "README.txt", "version.txt"]
+  s.files = [".gitignore", "History.txt", "Manifest.txt", "README.rdoc", "README.txt", "Rakefile", "lib/tanning_bed.rb", "spec/fixtures/burnt_model.rb", "spec/fixtures/tanning_model.rb", "spec/spec_helper.rb", "spec/tanning_bed_spec.rb", "tanning_bed.gemspec", "tasks/solr.rake", "tasks/solr.rb", "version.txt"]
   s.homepage = %q{http://notch8.com}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
