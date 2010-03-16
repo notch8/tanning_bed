@@ -55,10 +55,12 @@ namespace :solr do
   end
   
   def solr_path
-    if ENV["SOLR_PATH"]
-      return ENV["SOLR_PATH"]
+    return @solr_path if @solr_path
+    return @solr_path = ENV["SOLR_PATH"] if ENV["SOLR_PATH"]
+    if Gem.available? 'tanning_bed_solr'
+      return @solr_path = "#{Gem.searcher.find('tanning_bed_solr').full_gem_path}/vendor/solr"
     else
-      return "#{File.dirname(__FILE__)}/../vendor/solr"
+      raise 'No solr install found, either set SOLR_PATH or install tanning_bed_solr gem'
     end
   end
   

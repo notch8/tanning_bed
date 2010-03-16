@@ -2,20 +2,28 @@
 # configured in this Rakefile. The .rake files in the tasks directory
 # are where the options are used.
 
-load 'tasks/setup.rb'
+begin
+  require 'bones'
+rescue LoadError
+  abort '### Please install the "bones" gem ###'
+end
+
 
 ensure_in_path 'lib'
 require 'tanning_bed'
 
 task :default => 'spec:run'
 
-PROJ.name = 'tanning_bed'
-PROJ.authors = 'Rob Kaufman'
-PROJ.email = 'rob@notch8.com'
-PROJ.url = 'notch8.com'
-PROJ.rubyforge.name = 'tanning_bed'
-PROJ.version = TanningBed.version
+Bones {
+  name  'tanning_bed'
+  authors  'Rob Kaufman'
+  email    'rob@notch8.com'
+  url      'http://notch8.com'
+  rubyforge.name = 'tanning_bed'
+  spec.opts << '--color'
+  depend_on 'solr-ruby', '0.8'
+  depend_on 'tanning_bed_solr', :development => true
+}
 
-PROJ.spec.opts << '--color'
 
 # EOF

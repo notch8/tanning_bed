@@ -1,6 +1,10 @@
 __DIR__ = File.dirname(__FILE__) + "/"
-$: << File.expand_path(__DIR__ + '../vendor/solr-ruby/lib')
-require 'solr'
+begin
+  require 'solr'
+rescue LoadError
+  require 'rubygems'
+  require 'solr'
+end
 
 # $Id$
 
@@ -152,7 +156,7 @@ module TanningBed
 
 
   # :stopdoc:
-  VERSION = '0.0.10'
+  VERSION = '0.0.11'
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
