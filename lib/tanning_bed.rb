@@ -23,7 +23,7 @@ module TanningBed
     def solr_load(results)
       key_set = results.collect do |result|
         key = result["search_id"].first.split(" ")
-        next if key[0] != self.to_s
+        next if !key || !key[0] || key[0] != self.to_s
         Kernel.const_get(key[0]).send(:get, key[1])
       end
       key_set.delete(nil)
@@ -156,7 +156,7 @@ module TanningBed
 
 
   # :stopdoc:
-  VERSION = '0.0.11'
+  VERSION = "0.1.2"
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
