@@ -21,7 +21,7 @@ module TanningBed
     end
     
     def solr_load(results)
-      return [] unless results && !results.empty?
+      return [] unless results && results.respond_to?(:collect) && !results.empty?
       key_set = results.collect do |result|
         key = result["search_id"].first.split(" ")
         next if !key || !key[0] || key[0] != self.to_s
