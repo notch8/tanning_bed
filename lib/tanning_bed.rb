@@ -17,9 +17,9 @@ module TanningBed
     def solr_search(query_string, options={})
       TanningBed.solr_connection.query(query_string + " AND type_t:#{self}", options)
     rescue Errno::ECONNREFUSED => e
-      TanningBed.solr_exception(e)      
+      TanningBed.solr_exception(e)
     end
-    
+
     def solr_load(results)
       return [] unless results && results.respond_to?(:collect)
       key_set = results.collect do |result|
@@ -30,33 +30,33 @@ module TanningBed
       key_set.delete(nil)
       return key_set
     end
-    
+
     def solr_reindex
       # Remove all the old entries for this class
       TanningBed.solr_connection.delete_by_query(self.to_s)
-      
+
       #Add all the current records into the index
       self.all.each do |item|
         item.solr_add
       end
     end
   end
-  
+
   def self.included(base)
     @@conn = nil
     @@on_solr_exception = nil
     base.extend(ClassMethods)
   end
-  
+
   # connect to the solr instance
   def self.solr_connection(url='http://localhost:8983/solr', autocommit=:on, reset=false)
     if reset
-      @@conn = Solr::Connection.new(url, :autocommit => autocommit) 
+      @@conn = Solr::Connection.new(url, :autocommit => autocommit)
     else
       @@conn ||= Solr::Connection.new(url, :autocommit => autocommit)
     end
-  end  
-  
+  end
+
   def self.solr_exception(e)
     if TanningBed.on_solr_exception
       TanningBed.on_solr_exception.call(e)
@@ -64,15 +64,15 @@ module TanningBed
       $stderr.puts("SOLR - " + e.to_s)
     end
   end
-  
+
   def self.on_solr_exception
     @@on_solr_exception
   end
-  
+
   def self.on_solr_exception=(value)
     @@on_solr_exception = value
   end
-  
+
   def solr_id
     "#{self.class} #{self.id}"
   end
@@ -95,7 +95,7 @@ module TanningBed
   rescue Errno::ECONNREFUSED => e
     TanningBed.solr_exception(e)
   end
-  
+
   def self.solr_load(results)
     key_set = results.collect do |result|
       key = result["search_id"].first.split(" ")
@@ -113,13 +113,14 @@ module TanningBed
   def solr_keys
     raise "You must define the method solr_keys in the class you want to use for Solr.\n  This should return an array of method names to call on you're class for indexing\n eg: ['id', 'name', 'description']"
   end
-  
+
   def search_fields
     @fields = {}
     self.solr_keys.each do |key|
       if self.respond_to?(key)
         value = self.send(key)
-        key_type = lookup_key_type(key, value.class)        
+        key_type = lookup_key_type(key, value.class)
+        value = clean_value(value, key_type)
         @fields["#{key}#{key_type}"] = value
       end
     end
@@ -129,11 +130,30 @@ module TanningBed
     return @fields
   end
 
+  def clean_value(value, key_type)
+    case key_type
+    when "_facet"
+      value.gsub(/[^\x20-\x7E]/, '')
+    when "_t"
+      value.gsub(/[^\x20-\x7E]/, '')
+    when "_s_mv"
+      value.collect do |item|
+        if item.respond_to?(:gsub)
+          item.gsub(/[^\x20-\x7E]/, '')
+        else
+          item
+        end
+      end
+    else
+      value
+    end
+  end
+
   def lookup_key_type(key, klass)
     # is the key already in the correct_format?
     key_postfix = key.split("_").last
     return nil if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
-    
+
     # Add the helper to the key string
     case klass.to_s
     when "Fixnum"
@@ -157,7 +177,7 @@ module TanningBed
 
 
   # :stopdoc:
-  VERSION = "0.1.2"
+  VERSION = "0.2.0"
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
