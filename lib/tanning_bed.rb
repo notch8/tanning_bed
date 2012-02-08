@@ -119,8 +119,7 @@ module TanningBed
     self.solr_keys.each do |key|
       if self.respond_to?(key)
         value = self.send(key)
-        key_type = lookup_key_type(key, value.class)
-        value = clean_value(value, key_type)
+        key_type, value = solr_ready_key_value(key, value)
         @fields["#{key}#{key_type}"] = value
       end
     end
@@ -130,14 +129,29 @@ module TanningBed
     return @fields
   end
 
-  def clean_value(value, key_type)
-    case key_type
-    when "_facet"
-      value.gsub(/[^\x20-\x7E]/, '')
-    when "_t"
-      value.gsub(/[^\x20-\x7E]/, '')
-    when "_s_mv"
-      value.collect do |item|
+  def solr_ready_key_value(key, value)
+
+    # Add the helper to the key string
+    case value.class.to_s
+    when "Fixnum"
+      new_key = "_i"
+      new_value = value
+    when "String"
+      if key.size < 255
+        new_key = "_facet"
+      else
+        new_key = "_t"
+      end
+      new_value = value.gsub(/[^\x20-\x7E]/, '')
+    when "Float"
+      new_key = "_f"
+      new_value = value
+    when "Date", "Datetime", "Time"
+      new_key = "_d"
+      new_value = value
+    when "Array"
+      new_key = "_s_mv"
+      new_value = value.collect do |item|
         if item.respond_to?(:gsub)
           item.gsub(/[^\x20-\x7E]/, '')
         else
@@ -145,34 +159,17 @@ module TanningBed
         end
       end
     else
-      value
+      new_key = "_t"
+      new_value = value.to_s.gsub(/[^\x20-\x7E]/, '')
     end
-  end
 
-  def lookup_key_type(key, klass)
     # is the key already in the correct_format?
     key_postfix = key.split("_").last
-    return nil if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
-
-    # Add the helper to the key string
-    case klass.to_s
-    when "Fixnum"
-      "_i"
-    when "String"
-      if key.size < 255
-        "_facet"
-      else
-        "_t"
-      end
-    when "Float"
-      "_f"
-    when "Date", "Datetime", "Time"
-      "_d"
-    when "Array"
-      "_s_mv"
-    else
-      "_t"
+    if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
+      new_key = nil
     end
+
+    return [new_key, new_value]
   end
 
 
