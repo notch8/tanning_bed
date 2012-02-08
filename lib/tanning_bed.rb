@@ -142,7 +142,7 @@ module TanningBed
       else
         new_key = "_t"
       end
-      new_value = value.gsub(/[^\x20-\x7E]/, '')
+      new_value = value.to_s.gsub(/[^\x20-\x7E]/, '')
     when "Float"
       new_key = "_f"
       new_value = value
@@ -152,8 +152,8 @@ module TanningBed
     when "Array"
       new_key = "_s_mv"
       new_value = value.collect do |item|
-        if item.respond_to?(:gsub)
-          item.gsub(/[^\x20-\x7E]/, '')
+        if item && item.respond_to?(:gsub)
+          item.to_s.gsub(/[^\x20-\x7E]/, '')
         else
           item
         end
