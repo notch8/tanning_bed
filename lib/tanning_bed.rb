@@ -130,6 +130,13 @@ module TanningBed
   end
 
   def solr_ready_key_value(key, value)
+    # is the key already in the correct_format?
+    key_postfix = key.split("_").last
+    if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
+      new_key = nil
+      new_value = value
+      return [new_key, new_value]
+    end
 
     # Add the helper to the key string
     case value.class.to_s
@@ -163,18 +170,12 @@ module TanningBed
       new_value = value.to_s.gsub(/[^\x20-\x7E]/, '')
     end
 
-    # is the key already in the correct_format?
-    key_postfix = key.split("_").last
-    if ["i", "facet", "t", "f", "d", "mv"].include?(key_postfix)
-      new_key = nil
-    end
-
     return [new_key, new_value]
   end
 
 
   # :stopdoc:
-  VERSION = "0.2.0"
+  VERSION = "0.2.1"
   LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
   # :startdoc:
